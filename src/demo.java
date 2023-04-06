@@ -12,6 +12,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.paint.Color;
 
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -33,7 +34,8 @@ public class demo extends Application {
     ComboBox<String> comboBox;
     ComboBox<String> comboBoxPlayMode;
 
-    ListView<String> listView;
+    ListView<String> playListView;
+    ListView<String> recordListView;
     String localAudioDir = "audio";
     final String PLAY_MODE_PLAY_AND_QUEUE_NEXT = "play clip and queue next";
     final String PLAY_MODE_PLAY_SAME_CLIP = "play same clip";
@@ -54,7 +56,7 @@ public class demo extends Application {
         mediaPlayer.setOnEndOfMedia(this::onEndOfMedia);
         mediaPlayer.setOnStopped(this::onStopped);
 
-        listView.refresh();
+        playListView.refresh();
 
         System.out.println("end of play media : next index " + currentMediaIndex);
     }
@@ -122,7 +124,7 @@ public class demo extends Application {
                         //Files.readAllLines(file.toPath(), StandardCharsets.UTF_8).forEach(lines::add);
                         lines.addAll(Files.readAllLines(file.toPath(), StandardCharsets.UTF_8));
                         // Create a ListView and set its items to the ObservableList
-                        listView.setItems(lines);
+                        playListView.setItems(lines);
                     } catch (IOException e) {
                         System.out.println("An error occurred while reading the file: " + e.getMessage());
                     }
@@ -172,11 +174,11 @@ public class demo extends Application {
         );
         comboBoxPlayMode.setValue(PLAY_MODE_PLAY_AND_QUEUE_NEXT); // Set a default value
 
-        listView = new ListView<>();
-        listView.setPrefWidth(350);
+        playListView = new ListView<>();
+        playListView.setPrefWidth(350);
         loadMedia(localAudioDir + "/" + dirList.get(0));
 
-        listView.setCellFactory(param -> new ListCell<>() {
+        playListView.setCellFactory(param -> new ListCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -199,10 +201,10 @@ public class demo extends Application {
             }
         });
 
-        listView.setOnMouseClicked(event -> {
+        playListView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                int index = listView.getSelectionModel().getSelectedIndex();
-                if (index >= 0 && index < listView.getItems().size()) {
+                int index = playListView.getSelectionModel().getSelectedIndex();
+                if (index >= 0 && index < playListView.getItems().size()) {
                     //Add an event handler to the play button to start playing the media when clicked
                     currentMediaIndex = index / 2;
                     if (mediaPlayer.getStatus() == MediaPlayer.Status.PLAYING) {
@@ -220,12 +222,18 @@ public class demo extends Application {
             }
         });
 
+        recordListView = new ListView<>();
+
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(comboBox, comboBoxPlayMode, playButton);
+
+
         HBox hbox = new HBox(10); // Create an HBox with spacing of 10 pixels
         hbox.setBackground(new Background(new BackgroundFill(Color.rgb(230, 230, 250), null, null)));
         hbox.setAlignment(Pos.CENTER); // Center the buttons horizontally in the HBox
         hbox.setPrefSize(800, 600); // set the size of the scene
 
-        hbox.getChildren().addAll(comboBoxPlayMode, comboBox, playButton, listView);
+        hbox.getChildren().addAll(recordListView, vbox, playListView);
 
         // Initialize mediaPlayer
         currentMediaIndex = 0;
