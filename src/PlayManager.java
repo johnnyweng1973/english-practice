@@ -55,21 +55,20 @@ public class PlayManager {
         for (File file : files) {
             if (file.isFile()) {
                 System.out.println("load media file " + file.getName());
-                if (file.getName().contains(".txt")) {
-                    try {
-                        //String fileText = String.join("\n", Files.readAllLines(file.toPath(), StandardCharsets.UTF_8));
-                        // Read the contents of the file into an ObservableList
+                try {
+                    if (file.getName().contains(".txt")) {
                         lines = FXCollections.observableArrayList();
-                        //Files.readAllLines(file.toPath(), StandardCharsets.UTF_8).forEach(lines::add);
                         lines.addAll(Files.readAllLines(file.toPath(), StandardCharsets.UTF_8));
-
-                    } catch (IOException e) {
-                        System.out.println("An error occurred while reading the file: " + e.getMessage());
+                    } else {
+                        Media media = new Media(file.toURI().toString());
+                        mediaList.add(media);
                     }
-                    continue;
+                } catch (IOException e) {
+                    System.out.println("An error occurred while reading the file: " + e.getMessage());
+                } catch (Exception e) {
+                    // Handle the exception
+                    e.printStackTrace();
                 }
-                Media media = new Media(file.toURI().toString());
-                mediaList.add(media);
             }
         }
     }

@@ -20,8 +20,34 @@ public class GUIManager {
     ListView<String> playListView;
     ListView<String> recordListView;
 
+    public GUIManager() {
+        // Create a new button to play the media file
+        playButton = new Button("Play");
+        playButton.setPrefWidth(100); // Set the preferred width of the button to 100 pixels
+        playButton.setPrefHeight(50); // Set the preferred height of the button to 50 pixels
 
-    public  void setPlayManager(PlayManager playManager) {
+        comboBoxPlayList = new ComboBox<>();
+        comboBoxPlayMode = new ComboBox<>();
+
+        playListView = new ListView<>();
+        playListView.setPrefWidth(350);
+
+        recordListView = new ListView<>();
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(comboBoxPlayList, comboBoxPlayMode, playButton);
+
+
+        hbox = new HBox(10); // Create an HBox with spacing of 10 pixels
+        hbox.setBackground(new Background(new BackgroundFill(Color.rgb(230, 230, 250), null, null)));
+        hbox.setAlignment(Pos.CENTER); // Center the buttons horizontally in the HBox
+        hbox.setPrefSize(800, 600); // set the size of the scene
+
+        hbox.getChildren().addAll(recordListView, vbox, playListView);
+
+    }
+
+
+    public void setPlayManager(PlayManager playManager) {
 
         this.playManager = playManager;
     }
@@ -35,12 +61,8 @@ public class GUIManager {
         playButton.setText("Play");
     }
 
-    void init(){
+    void init() {
 
-        // Create a new button to play the media file
-        playButton = new Button("Play");
-        playButton.setPrefWidth(100); // Set the preferred width of the button to 100 pixels
-        playButton.setPrefHeight(50); // Set the preferred height of the button to 50 pixels
         //Add an event handler to the play button to start playing the media when clicked
         playButton.setOnAction(event -> {
             // start media play, when media end, it will notify us with listener function onMediaEnd we registered
@@ -54,12 +76,10 @@ public class GUIManager {
         });
 
 
-        comboBoxPlayList = new ComboBox<>();
         comboBoxPlayList.getItems().addAll(playManager.dirList);
         comboBoxPlayList.setValue(playManager.dirList.get(0)); // Set a default value
         comboBoxPlayList.setOnAction(this::handleComboBoxEvent);
 
-        comboBoxPlayMode = new ComboBox<>();
         comboBoxPlayMode.getItems().addAll(
                 playManager.PLAY_MODE_PLAY_AND_QUEUE_NEXT,
                 playManager.PLAY_MODE_PLAY_SAME_CLIP,
@@ -67,8 +87,6 @@ public class GUIManager {
         );
         comboBoxPlayMode.setValue(playManager.PLAY_MODE_PLAY_AND_QUEUE_NEXT); // Set a default value
 
-        playListView = new ListView<>();
-        playListView.setPrefWidth(350);
 
         playListView.setCellFactory(param -> new ListCell<>() {
             @Override
@@ -97,9 +115,8 @@ public class GUIManager {
                 int index = playListView.getSelectionModel().getSelectedIndex();
                 if (index >= 0 && index < playListView.getItems().size()) {
                     //Add an event handler to the play button to start playing the media when clicked
-                    playManager.newMediaPlayer(index/2);
-                                                        }
-                else {
+                    playManager.newMediaPlayer(index / 2);
+                } else {
                     // The index is out of range, so we don't access the collection
                     System.out.println("Invalid index: " + index);
                 }
@@ -107,20 +124,9 @@ public class GUIManager {
         });
         playListView.setItems(playManager.lines);
 
-        recordListView = new ListView<>();
 
         playManager.newMediaPlayer(0);
 
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(comboBoxPlayList, comboBoxPlayMode, playButton);
-
-
-        hbox = new HBox(10); // Create an HBox with spacing of 10 pixels
-        hbox.setBackground(new Background(new BackgroundFill(Color.rgb(230, 230, 250), null, null)));
-        hbox.setAlignment(Pos.CENTER); // Center the buttons horizontally in the HBox
-        hbox.setPrefSize(800, 600); // set the size of the scene
-
-        hbox.getChildren().addAll(recordListView, vbox, playListView);
     }
 
 

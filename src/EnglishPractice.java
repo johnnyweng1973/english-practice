@@ -7,6 +7,23 @@ public class EnglishPractice extends Application {
     RecordManager recordManager;
     PlayManager playManager;
 
+     public EnglishPractice(){
+        System.out.println("constructor is called");
+         // Initialize mediaPlayer
+         playManager = new PlayManager();
+
+         // Initialize guiManager
+         guiManager = new GUIManager();
+
+         // Initialize recordManager
+         recordManager = new RecordManager(this);
+
+         playManager.setGuiManager(guiManager);
+         guiManager.setPlayManager(playManager);
+
+         guiManager.init();
+    }
+
     @Override
     public void start(Stage stage) {
 
@@ -17,19 +34,7 @@ public class EnglishPractice extends Application {
         // 4. initialize GUIManager. mediaplayer from playermanager will be initialized here
         // because it needs to reference functions from playbutton and a listview
 
-        // Initialize mediaPlayer
-        playManager = new PlayManager();
 
-        // Initialize guiManager
-        guiManager = new GUIManager();
-
-        // Initialize recordManager
-        recordManager = new RecordManager(this);
-
-        playManager.setGuiManager(guiManager);
-        guiManager.setPlayManager(playManager);
-
-        guiManager.init();
 
         // Create a new scene with the play button and set it to the stage
         Scene scene = new Scene(guiManager.hbox);
